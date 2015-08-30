@@ -1,5 +1,6 @@
 package com.jalen.screenrecord.fragment;
 
+import android.content.res.TypedArray;
 import android.support.v7.app.AppCompatActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -20,9 +21,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.jalen.screenrecord.R;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -60,6 +68,11 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
+    /**
+     * 数据源
+     */
+    private List<Map<String, Object>> datas;
+
     public NavigationDrawerFragment() {
     }
 
@@ -77,6 +90,16 @@ public class NavigationDrawerFragment extends Fragment {
             mFromSavedInstanceState = true;
         }
 
+        datas = new ArrayList<Map<String, Object>>();
+        String[] itemTitles = getResources().getStringArray(R.array.drawer_items_text);
+        TypedArray itemIcons = getResources().obtainTypedArray(R.array.drawer_items_icon);
+        for (int i=0; i<itemTitles.length; i++){
+            Map<String, Object> item = new HashMap<String, Object>();
+            item.put("icon", itemIcons.getResourceId(i, 0));
+            item.put("text", itemTitles[i]);
+            datas.add(item);
+        }
+
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
     }
@@ -84,7 +107,6 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
     }
 
@@ -99,15 +121,13 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
+
+        mDrawerListView.setAdapter(new SimpleAdapter(
                 getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                new String[]{
-                        getString(R.string.title_section1),
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                }));
+                datas,
+                R.layout.adapter_drawer,
+                new String[]{"icon", "text"},
+                new int[]{R.id.drawer_item_icon, R.id.drawer_item_text}));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }

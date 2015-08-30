@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="appColorPrimary">#F44336</color>
+    <color name="appColorPrimaryDark">#E53935</color>
+    <color name="appTextColorPrimary">#FFFFFF</color>
+    <color name="appNavigationBarColor">@color/black</color>
+    <color name="appWindowBackground">#FFFFFF</color>
+
+    <color name="black">#000000</color>
+    <color name="recordPrimary">#F44336</color>
+    <color name="recordPrimaryDark">#E53935</color>
+    <color name="recordPrimaryRipple">#FFCDD2</color>
+    <color name="video_thumbnail_bg">#ffffff</color>
+    <color name="video_name_bg">#55757575</color>
+    <color name="video_name_color">@android:color/white</color>
+    <color name="textColorPrimaryLight">#333333</color>
+</resources>

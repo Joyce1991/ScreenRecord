@@ -1,11 +1,14 @@
 package com.jalen.screenrecord.activity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.jalen.screenrecord.Contants;
 import com.jalen.screenrecord.R;
 
 
@@ -15,14 +18,29 @@ import com.jalen.screenrecord.R;
  */
 public class BaseActivity extends AppCompatActivity {
     public String tag;
+
     /**
      * 初始<code>Toolbar</code>和<code>Drawer</code>切换
      */
     private Toolbar mActionBarToolbar;
+    private SharedPreferences sp;
 
     public BaseActivity(){
         super();
         tag = this.getClass().getSimpleName();
+
+    }
+
+    public boolean getBooleanPreferenceByKey(String key){
+        sp = getSharedPreferences(Contants.APP_PREFERENCES, Context.MODE_PRIVATE);
+        return sp.getBoolean(key, false);
+    }
+    public void setBooleanPreference(String key, boolean value){
+        sp = getSharedPreferences(Contants.APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean(key,value);
+        editor.commit();
+        editor = null;
     }
 
     // ******************************打印Activity生命周期*******************************************
@@ -84,10 +102,12 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    // *************************************** ActionBar 设置 **************************************
+
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-
+        getActionBarToolbar();
     }
 
     protected Toolbar getActionBarToolbar() {
@@ -99,4 +119,5 @@ public class BaseActivity extends AppCompatActivity {
         }
         return mActionBarToolbar;
     }
+
 }

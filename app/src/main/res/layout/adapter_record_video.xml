@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/video_margin">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_video_thumb"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/videoThumbHeight"
+            android:background="@color/video_thumbnail_bg"
+            android:contentDescription="@string/iv_video_thumb" />
+
+        <TextView
+            android:id="@+id/tv_video_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@color/video_name_bg"
+            android:padding="@dimen/video_name_padding"
+            android:textColor="@color/video_name_color"
+            android:text="@string/hint_video_name"/>
+
+        <!--操作按钮-->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_video_thumb"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_share"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:drawableLeft="@drawable/ic_action_share"
+                android:text="@string/btn_share"
+                android:textColor="@color/textColorPrimaryLight"/>
+
+            <Button
+                android:id="@+id/btn_delete"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="0.0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:drawableLeft="@drawable/ic_action_delete"
+                android:text="@string/btn_delete"
+                android:textColor="@color/textColorPrimaryLight"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

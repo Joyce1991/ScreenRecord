@@ -10,4 +10,5 @@
     <dimen name="videoThumbHeight">180dp</dimen>
     <dimen name="video_name_padding">8dp</dimen>
     <dimen name="base_radius">2dp</dimen>
+    <dimen name="item_minHeight">48dp</dimen>
 </resources>

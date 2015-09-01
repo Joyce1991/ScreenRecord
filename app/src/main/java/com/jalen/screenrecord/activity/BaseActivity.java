@@ -17,12 +17,18 @@ import com.jalen.screenrecord.R;
  * <div>Created by jalen on 2015/8/22.</div>
  */
 public class BaseActivity extends AppCompatActivity {
+    /**
+     * 用于log打印，记录当前类名
+     */
     public String tag;
 
     /**
      * 初始<code>Toolbar</code>和<code>Drawer</code>切换
      */
-    private Toolbar mActionBarToolbar;
+    private Toolbar mToolbar;
+    /**
+     * 配置设置辅助对象
+     */
     private SharedPreferences sp;
 
     public BaseActivity(){
@@ -111,13 +117,13 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected Toolbar getActionBarToolbar() {
-        if (mActionBarToolbar == null) {
-            mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-            if (mActionBarToolbar != null) {
-                setSupportActionBar(mActionBarToolbar);
+        if (mToolbar == null) {
+            mToolbar = (Toolbar) findViewById(R.id.toolbar);
+            if (mToolbar != null) {
+                setSupportActionBar(mToolbar);
             }
         }
-        return mActionBarToolbar;
+        return mToolbar;
     }
 
 }

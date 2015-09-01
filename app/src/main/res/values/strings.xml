@@ -22,7 +22,7 @@
         <item>设置</item>
         <item>Gif制作</item>
         <item>视频剪辑</item>
-        <item>关于</item>
+        <item>帮助与反馈</item>
     </string-array>
     <string-array name="drawer_items_icon">
         <item>@drawable/ic_action_settings_light</item>
@@ -30,4 +30,7 @@
         <item>@drawable/ic_action_trim_light</item>
         <item>@drawable/ic_action_about_light</item>
     </string-array>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

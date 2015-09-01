@@ -15,13 +15,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 
-import com.jalen.screenrecord.Contants;
 import com.jalen.screenrecord.fragment.NavigationDrawerFragment;
 import com.jalen.screenrecord.R;
 import com.jalen.screenrecord.fragment.VideoListFragment;
 import com.jalen.screenrecord.service.ScreeenRecordService;
 import com.melnykov.fab.FloatingActionButton;
 
+/**
+ * 主activity
+ * <div>参考文献：<a href="http://enginebai.logdown.com/posts/280450/android-toolbar-navigation-drawer">Toolbar + 套用Navigation Drawer</a></div>
+ */
 public class Main extends BaseActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, View.OnClickListener {
 
@@ -32,6 +35,7 @@ public class Main extends BaseActivity
     private CharSequence mTitle;
 
     private ScreeenRecordService.ScreenRecordController mController;
+
     /**
      * 录制悬浮按钮
      */
@@ -40,7 +44,14 @@ public class Main extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        // 把statusbar设为透明，让colorprimarydark也可以在4.4显示出来，让toolbar延伸到statusbar
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow(); // in Activity's onCreate() for instance
+            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }*/
+
+        setContentView(R.layout.activity_main_under);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -49,20 +60,28 @@ public class Main extends BaseActivity
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
+                getActionBarToolbar(),
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         btnRecord = (FloatingActionButton) this.findViewById(R.id.btn_record);
-        btnRecord.setImageResource(getBooleanPreferenceByKey(Contants.PREFERENCE_KEY_ISRECORDING) ? R.drawable.ic_stop_white_24dp : R.drawable.ic_action_record);
+//        btnRecord.setImageResource(getBooleanPreferenceByKey(Contants.PREFERENCE_KEY_ISRECORDING) ? R.drawable.ic_stop_white_24dp : R.drawable.ic_action_record);
+        btnRecord.setImageResource(R.drawable.ic_action_record);
         btnRecord.setOnClickListener(this);
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, VideoListFragment.newInstance("params1","params2"))
-                .commit();
+        if (position == 0){
+            Intent intent2Settings = new Intent(this, Settings.class);
+            startActivity(intent2Settings);
+        }else{
+            // update the main content by replacing fragments
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, VideoListFragment.newInstance("params1","params2"))
+                    .commit();
+        }
+
     }
 
     public void onSectionAttached(int number) {
@@ -130,7 +149,7 @@ public class Main extends BaseActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CREATE_SCREEN_CAPTURE){
             if (resultCode == Activity.RESULT_OK){
-                Log.d(tag, "创建屏幕捕获成功");
+                Log.d("joyce", "创建屏幕捕获成功");
                 // 通过start方式开启service
                 // 通过bind方式绑定屏幕录制服务
 //                Intent intent2RecordService = new Intent(this. ScreenRecordService.class);
@@ -147,7 +166,7 @@ public class Main extends BaseActivity
             mController = (ScreeenRecordService.ScreenRecordController) service;
             mController.startScreenRecord();
             btnRecord.setImageResource(R.drawable.ic_stop_white_24dp);
-            Log.d(tag, "获取控制器成功");
+            Log.d("joyce", "获取控制器成功");
         }
 
         @Override

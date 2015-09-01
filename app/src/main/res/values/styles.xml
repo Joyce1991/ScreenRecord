@@ -1,13 +1,17 @@
 <resources>
 
-    <!-- app 基础theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- app 基础theme. 要用toolbar替代,这里得用NoActionBar-->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/appColorPrimary</item>
         <item name="colorPrimaryDark">@color/appColorPrimaryDark</item>
         <item name="android:textColorPrimary">@color/appTextColorPrimary</item>
         <item name="android:navigationBarColor">@color/appNavigationBarColor</item>
         <item name="android:windowBackground">@color/appWindowBackground</item>
+
+        <!--声明使用toolbar替代actionbar-->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
         <item name="drawerArrowStyle">@style/AppTheme.DrawerArrowStyle</item>
 
         <!--activity 过度-->
@@ -28,13 +32,12 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
 
-    <style name="ActionBarThemeOverlay" parent="">
+    <style name="ActionBarThemeOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColorPrimary">#fff</item>
         <item name="colorControlNormal">?actionBarIconColor</item>
         <item name="colorControlHighlight">#3fff</item>
     </style>
 
-    <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">#fff</item>

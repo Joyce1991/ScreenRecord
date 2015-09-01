@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Main">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_actionbar" />
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
+
+        <!-- main content view. -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <FrameLayout
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+                <!--悬浮按钮：录制-->
+                <com.melnykov.fab.FloatingActionButton
+                    android:id="@+id/btn_record"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|right"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/ic_action_record"
+                    app:fab_colorNormal="@color/recordPrimary"
+                    app:fab_colorPressed="@color/recordPrimaryDark"
+                    app:fab_colorRipple="@color/recordPrimaryRipple" />
+            </FrameLayout>
+
+
+        </RelativeLayout>
+
+
+        <!--
+            1.layout_gravity="start" 抽屉在左边，从左到右划出;
+            2.layout_height 为 match_parent，layout_height 为 一个固定值.
+        -->
+        <fragment
+            android:id="@+id/navigation_drawer"
+            android:name="com.jalen.screenrecord.fragment.NavigationDrawerFragment"
+            android:layout_width="@dimen/navigation_drawer_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            tools:layout="@layout/fragment_navigation_drawer" />
+
+    </android.support.v4.widget.DrawerLayout>
+</RelativeLayout>
+

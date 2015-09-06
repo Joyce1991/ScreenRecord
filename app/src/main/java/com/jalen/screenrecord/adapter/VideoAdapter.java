@@ -63,7 +63,7 @@ public class VideoAdapter extends BaseAdapter {
         VideoBean videoBean = mData.get(position);
         holder.tvVideoName.setText(videoBean.getVideoName());
         // 加载视频缩略图
-        VideoThumbnailLoader.getInstance().displayThumbnail(holder.ivVideoThumb, videoBean.getVideoPath(),R.drawable.ic_panorama_black_48dp);
+        VideoThumbnailLoader.getInstance().displayThumbnail(holder.ivVideoThumb, videoBean.getVideoPath(),R.drawable.ic_movie_bg);
         holder.ivVideoThumb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

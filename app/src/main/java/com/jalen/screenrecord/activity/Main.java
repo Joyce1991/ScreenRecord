@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 
+import com.jalen.screenrecord.fragment.GifMakerFragment;
 import com.jalen.screenrecord.fragment.NavigationDrawerFragment;
 import com.jalen.screenrecord.R;
 import com.jalen.screenrecord.fragment.VideoListFragment;
@@ -26,20 +27,17 @@ import com.melnykov.fab.FloatingActionButton;
  * <div>参考文献：<a href="http://enginebai.logdown.com/posts/280450/android-toolbar-navigation-drawer">Toolbar + 套用Navigation Drawer</a></div>
  */
 public class Main extends BaseActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, View.OnClickListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    private static final int REQUEST_CREATE_SCREEN_CAPTURE = 0x0001;
+
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
     private CharSequence mTitle;
 
-    private ScreeenRecordService.ScreenRecordController mController;
 
-    /**
-     * 录制悬浮按钮
-     */
-    private FloatingActionButton btnRecord;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +61,6 @@ public class Main extends BaseActivity
                 getActionBarToolbar(),
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        btnRecord = (FloatingActionButton) this.findViewById(R.id.btn_record);
-//        btnRecord.setImageResource(getBooleanPreferenceByKey(Contants.PREFERENCE_KEY_ISRECORDING) ? R.drawable.ic_stop_white_24dp : R.drawable.ic_action_record);
-        btnRecord.setImageResource(R.drawable.ic_action_record);
-        btnRecord.setOnClickListener(this);
     }
 
     @Override
@@ -74,6 +68,11 @@ public class Main extends BaseActivity
         if (position == 0){
             Intent intent2Settings = new Intent(this, Settings.class);
             startActivity(intent2Settings);
+        }else if (position ==1) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, GifMakerFragment.newInstance("params1", "params2"))
+                    .commit();
         }else{
             // update the main content by replacing fragments
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -128,50 +127,7 @@ public class Main extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_record:
-                if(mController != null && mController.isRecording()){
-                    mController.stopScreenRecord();
-                    btnRecord.setImageResource(R.drawable.ic_action_record);
-                }else{
-                    MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) this.getSystemService(MEDIA_PROJECTION_SERVICE);
-                    Intent intent2ScreenCapture = mediaProjectionManager.createScreenCaptureIntent();
-                    startActivity(intent2ScreenCapture);
-                    startActivityForResult(intent2ScreenCapture, REQUEST_CREATE_SCREEN_CAPTURE);
-                }
-                break;
-        }
-    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CREATE_SCREEN_CAPTURE){
-            if (resultCode == Activity.RESULT_OK){
-                Log.d("joyce", "创建屏幕捕获成功");
-                // 通过start方式开启service
-                // 通过bind方式绑定屏幕录制服务
-//                Intent intent2RecordService = new Intent(this. ScreenRecordService.class);
-                bindService(ScreeenRecordService.newIntent(this, resultCode, data), new ScreenRecordConnection(), BIND_AUTO_CREATE);
-            }
-        }else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
 
-    private class ScreenRecordConnection implements ServiceConnection {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mController = (ScreeenRecordService.ScreenRecordController) service;
-            mController.startScreenRecord();
-            btnRecord.setImageResource(R.drawable.ic_stop_white_24dp);
-            Log.d("joyce", "获取控制器成功");
-        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    }
 }

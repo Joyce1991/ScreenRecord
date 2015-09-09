@@ -17,34 +17,10 @@
         android:layout_below="@id/toolbar">
 
         <!-- main content view. -->
-        <RelativeLayout
+        <FrameLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <FrameLayout
-                    android:id="@+id/container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-                <!--悬浮按钮：录制-->
-                <com.melnykov.fab.FloatingActionButton
-                    android:id="@+id/btn_record"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|right"
-                    android:layout_margin="16dp"
-                    android:src="@drawable/ic_action_record"
-                    app:fab_colorNormal="@color/recordPrimary"
-                    app:fab_colorPressed="@color/recordPrimaryDark"
-                    app:fab_colorRipple="@color/recordPrimaryRipple" />
-            </FrameLayout>
-
-
-        </RelativeLayout>
+            android:layout_height="match_parent" />
 
 
         <!--

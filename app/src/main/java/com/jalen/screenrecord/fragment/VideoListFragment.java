@@ -1,12 +1,18 @@
 package com.jalen.screenrecord.fragment;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaScannerConnection;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +25,9 @@ import com.jalen.screenrecord.R;
 import com.jalen.screenrecord.activity.VideoPlayer;
 import com.jalen.screenrecord.adapter.VideoAdapter;
 import com.jalen.screenrecord.bean.VideoBean;
+import com.jalen.screenrecord.service.ScreeenRecordService;
 import com.jalen.screenrecord.util.MediaFile;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -31,7 +39,7 @@ import java.util.List;
  * 视频列表显示界面
  */
 public class VideoListFragment extends BaseFragment implements AdapterView.OnItemClickListener {
-
+    private static final int REQUEST_CREATE_SCREEN_CAPTURE = 0x0001;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -45,6 +53,12 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     private MediaScannerConnection.MediaScannerConnectionClient mClient;
 
     private String mVideoFileDir;
+
+    /**
+     * 录制悬浮按钮
+     */
+    private FloatingActionButton btnRecord;
+    private ScreeenRecordService.ScreenRecordController mController;
 
     public static VideoListFragment newInstance(String param1, String param2) {
         VideoListFragment fragment = new VideoListFragment();
@@ -83,11 +97,30 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
 
+
+
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        btnRecord = (FloatingActionButton) view.findViewById(R.id.btn_record);
+//        btnRecord.setImageResource(getBooleanPreferenceByKey(Contants.PREFERENCE_KEY_ISRECORDING) ? R.drawable.ic_stop_white_24dp : R.drawable.ic_action_record);
+        btnRecord.setImageResource(R.drawable.ic_action_record);
+        btnRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mController != null && mController.isRecording()) {
+                    mController.stopScreenRecord();
+                    btnRecord.setImageResource(R.drawable.ic_action_record);
+                } else {
+                    MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) getActivity().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+                    Intent intent2ScreenCapture = mediaProjectionManager.createScreenCaptureIntent();
+                    startActivity(intent2ScreenCapture);
+                    startActivityForResult(intent2ScreenCapture, REQUEST_CREATE_SCREEN_CAPTURE);
+                }
+            }
+        });
         // 启动扫描线程
         showDialog(getText(R.string.dialog_scan_video));
         new Thread(new ScanRunnable()).start();
@@ -108,7 +141,20 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     public void onDetach() {
         super.onDetach();
     }
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CREATE_SCREEN_CAPTURE){
+            if (resultCode == Activity.RESULT_OK){
+                Log.d("joyce", "创建屏幕捕获成功");
+                // 通过start方式开启service
+                // 通过bind方式绑定屏幕录制服务
+//                Intent intent2RecordService = new Intent(this. ScreenRecordService.class);
+                getActivity().bindService(ScreeenRecordService.newIntent(getActivity(), resultCode, data), new ScreenRecordConnection(), Context.BIND_AUTO_CREATE);
+            }
+        }else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     /**
      * The default content for this Fragment has a TextView that is shown when
@@ -204,6 +250,21 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
                         break;
                 }
             }
+        }
+    }
+
+    private class ScreenRecordConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mController = (ScreeenRecordService.ScreenRecordController) service;
+            mController.startScreenRecord();
+            btnRecord.setImageResource(R.drawable.ic_stop_white_24dp);
+            Log.d("joyce", "获取控制器成功");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
         }
     }
 }

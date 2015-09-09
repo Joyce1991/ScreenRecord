@@ -129,7 +129,7 @@ public class VideoThumbnailLoader {
                 while (mTaskQueue.size() > 0){
                     LoadTask task = mTaskQueue.remove(0);
                     // 将解析出来的图片添加到缓存中
-                    task.bitmap = ImageUtil.getVideoThumbnail(task.path);
+                    task.bitmap = BitmapUtil.getVideoThumbnail(task.path);
                     Log.d(tag, "解析出图片：" + task.path);
                     caches.put(task.path, new SoftReference<Bitmap>(task.bitmap));
                     if(handler != null){

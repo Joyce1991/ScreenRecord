@@ -4,11 +4,44 @@
     android:layout_height="match_parent"
     tools:context="com.jalen.screenrecord.fragment.GifMakerFragment">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:background="#fafafa">
 
-    </RelativeLayout>
+        <!--区段控制-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:layout_weight="1"
+                android:text="00:00"/>
+            <TextView
+                android:id="@+id/tv_end_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_weight="1"
+                android:text="09:35"/>
+        </LinearLayout>
+        <com.jalen.screenrecord.widget.RangeSeekBar
+            android:id="@+id/sb_start_end"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:showLabels="false"
+            app:paddingStart="0dp"
+            app:paddingEnd="0dp"/>
+    </LinearLayout>
 
     <!--悬浮按钮：录制-->
     <com.melnykov.fab.FloatingActionButton

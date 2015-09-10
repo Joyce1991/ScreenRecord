@@ -30,6 +30,7 @@ public class ScreeenRecordService extends BaseService {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(tag, "服务绑定成功");
+/*
 
         // 1. 验证传递过来的信息是否为null
         int resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, Activity.RESULT_CANCELED);
@@ -40,6 +41,7 @@ public class ScreeenRecordService extends BaseService {
 
         // 2. 启动一个录屏会话
         session = new RecordingSession(this, resultCode, data);
+*/
 
         // 3. 在这里把屏幕录制类控制器代理给前端，让他们持有控制器
         return new ScreenRecordController();

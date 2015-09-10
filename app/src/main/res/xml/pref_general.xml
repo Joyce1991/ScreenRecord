@@ -1,33 +1,61 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
-        android:key="example_checkbox"
-        android:title="@string/pref_title_social_recommendations"
-        android:summary="@string/pref_description_social_recommendations"
-        android:defaultValue="true" />
+    <PreferenceCategory android:title="@string/settins_record">
+        <ListPreference
+            android:defaultValue=""
+            android:dialogTitle="@string/recording_folder_title"
+            android:icon="@drawable/ic_folder_black_24dp"
+            android:key="RECORDING_FOLDER"
+            android:persistent="true"
+            android:summary="@string/recording_folder_sum"
+            android:title="@string/recording_folder_title" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_keyboard_voice_black_24dp"
+            android:key="RECORD_AUDIO"
+            android:persistent="true"
+            android:summary="@string/record_sound_sum"
+            android:title="@string/record_sound_title" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_screen_lock_portrait_black_24dp"
+            android:key="STOP_ON_SLEEP"
+            android:persistent="true"
+            android:summary="@string/stop_onscreen_off_sum"
+            android:title="@string/stop_onscreen_off_title" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_vibration_black_24dp"
+            android:key="STOP_ON_SHAKE"
+            android:persistent="true"
+            android:summary="@string/stop_on_shake_sum"
+            android:title="@string/stop_on_shake_title" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:icon="@drawable/ic_lens_black_24dp"
+            android:key="SHOW_TOUCHES"
+            android:persistent="true"
+            android:summary="@string/show_touch_sum"
+            android:title="@string/show_touch_title" />
+    </PreferenceCategory>
 
-    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
-    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
-    <EditTextPreference
-        android:key="example_text"
-        android:title="@string/pref_title_display_name"
-        android:defaultValue="@string/pref_default_display_name"
-        android:selectAllOnFocus="true"
-        android:inputType="textCapWords"
-        android:capitalize="words"
-        android:singleLine="true"
-        android:maxLines="1" />
-
-    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
-         dismiss it. -->
-    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
-    <ListPreference
-        android:key="example_list"
-        android:title="@string/pref_title_add_friends_to_messages"
-        android:defaultValue="-1"
-        android:entries="@array/pref_example_list_titles"
-        android:entryValues="@array/pref_example_list_values"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null" />
+    <PreferenceCategory android:title="@string/settings_other">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:icon="@drawable/ic_play_circle_filled_black_24dp"
+            android:key="USE_INTERNAL_PLAYER"
+            android:persistent="true"
+            android:summary="@string/settings_use_intenal_player_sum"
+            android:title="@string/settings_use_intenal_player_tit" />
+        <SwitchPreference
+            android:icon="@drawable/ic_cloud_download_black_24dp"
+            android:key="PROMO_NOTIFICATION"
+            android:summary="@string/settings_update_sum"
+            android:title="@string/settings_update" />
+        <Preference
+            android:icon="@drawable/ic_help_black_24dp"
+            android:key="ABOUT"
+            android:title="@string/about_and_help_titile" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,26 +1,19 @@
 package com.jalen.screenrecord.activity;
 
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.media.projection.MediaProjectionManager;
-import android.os.IBinder;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 
+import com.jalen.screenrecord.fragment.CutFragment;
+import com.jalen.screenrecord.fragment.FeedbackFragment;
 import com.jalen.screenrecord.fragment.GifMakerFragment;
 import com.jalen.screenrecord.fragment.NavigationDrawerFragment;
 import com.jalen.screenrecord.R;
 import com.jalen.screenrecord.fragment.VideoListFragment;
-import com.jalen.screenrecord.service.ScreeenRecordService;
-import com.melnykov.fab.FloatingActionButton;
 
 /**
  * 主activity
@@ -65,36 +58,39 @@ public class Main extends BaseActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        if (position == 0){
-            Intent intent2Settings = new Intent(this, Settings.class);
-            startActivity(intent2Settings);
-        }else if (position ==1) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, GifMakerFragment.newInstance("params1", "params2"))
-                    .commit();
-        }else{
-            // update the main content by replacing fragments
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, VideoListFragment.newInstance("params1","params2"))
-                    .commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        switch (position) {
+            case 0:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, VideoListFragment.newInstance(0, "params2"))
+                        .commit();
+                break;
+            case 1:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, GifMakerFragment.newInstance(1, "params2"))
+                        .commit();
+                break;
+            case 2:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, CutFragment.newInstance(2, "params2"))
+                        .commit();
+                break;
+            case 3:
+                Intent intent2Settings = new Intent(this, Settings.class);
+                startActivity(intent2Settings);
+                break;
+            case 4:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, FeedbackFragment.newInstance(4, "params2"))
+                        .commit();
+                break;
         }
 
     }
 
     public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-        }
+        String[] items = getResources().getStringArray(R.array.drawer_items_text);
+        mTitle = items[number];
     }
 
     public void restoreActionBar() {
@@ -126,8 +122,4 @@ public class Main extends BaseActivity
 
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
 }

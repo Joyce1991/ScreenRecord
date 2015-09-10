@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.jalen.screenrecord.AfferentException;
 import com.jalen.screenrecord.R;
+import com.jalen.screenrecord.activity.Main;
 import com.jalen.screenrecord.activity.VideoPlayer;
 import com.jalen.screenrecord.adapter.VideoAdapter;
 import com.jalen.screenrecord.bean.VideoBean;
@@ -40,8 +41,8 @@ import java.util.List;
  */
 public class VideoListFragment extends BaseFragment implements AdapterView.OnItemClickListener {
     private static final int REQUEST_CREATE_SCREEN_CAPTURE = 0x0001;
-    private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_SECTION_NUMBER = "section_number";
 
     private String mParam1;
     private String mParam2;
@@ -60,10 +61,16 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     private FloatingActionButton btnRecord;
     private ScreeenRecordService.ScreenRecordController mController;
 
-    public static VideoListFragment newInstance(String param1, String param2) {
+    /**
+     *
+     * @param sectionNumber 在navigation中的position
+     * @param param2
+     * @return
+     */
+    public static VideoListFragment newInstance(int sectionNumber, String param2) {
         VideoListFragment fragment = new VideoListFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -79,7 +86,6 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
@@ -135,6 +141,8 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }*/
+        ((Main) activity).onSectionAttached(
+                getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
     @Override
@@ -149,11 +157,17 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
                 // 通过start方式开启service
                 // 通过bind方式绑定屏幕录制服务
 //                Intent intent2RecordService = new Intent(this. ScreenRecordService.class);
-                getActivity().bindService(ScreeenRecordService.newIntent(getActivity(), resultCode, data), new ScreenRecordConnection(), Context.BIND_AUTO_CREATE);
+//                getActivity().bindService(ScreeenRecordService.newIntent(getActivity(), resultCode, data), new ScreenRecordConnection(), Context.BIND_AUTO_CREATE);
             }
         }else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().bindService(new Intent(getActivity(), ScreeenRecordService.class), new ScreenRecordConnection(), Context.BIND_AUTO_CREATE);
     }
 
     /**
@@ -256,9 +270,9 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     private class ScreenRecordConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mController = (ScreeenRecordService.ScreenRecordController) service;
+            /*mController = (ScreeenRecordService.ScreenRecordController) service;
             mController.startScreenRecord();
-            btnRecord.setImageResource(R.drawable.ic_stop_white_24dp);
+            btnRecord.setImageResource(R.drawable.ic_stop_white_24dp);*/
             Log.d("joyce", "获取控制器成功");
         }
 

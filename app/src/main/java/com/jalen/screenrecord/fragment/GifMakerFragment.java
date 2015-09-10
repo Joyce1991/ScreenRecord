@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import com.jalen.screenrecord.R;
+import com.jalen.screenrecord.activity.Main;
 import com.jalen.screenrecord.encoder.AnimatedGifEncoder;
 import com.jalen.screenrecord.service.ScreeenRecordService;
 import com.melnykov.fab.FloatingActionButton;
@@ -36,8 +37,8 @@ import java.util.List;
  */
 public class GifMakerFragment extends BaseFragment {
 //    private OnGifListener mGifListener = null;
-    private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_SECTION_NUMBER = "section_number";
 
     private String mParam1;
     private String mParam2;
@@ -50,10 +51,10 @@ public class GifMakerFragment extends BaseFragment {
 //    private OnGifListener mGifListener = null;
 
 
-    public static GifMakerFragment newInstance(String param1, String param2) {
+    public static GifMakerFragment newInstance(int sectionNumber, String param2) {
         GifMakerFragment fragment = new GifMakerFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
@@ -66,10 +67,7 @@ public class GifMakerFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
@@ -88,7 +86,8 @@ public class GifMakerFragment extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
+        ((Main) activity).onSectionAttached(
+                getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
     @Override

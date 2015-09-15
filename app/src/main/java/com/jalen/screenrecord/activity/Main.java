@@ -21,16 +21,13 @@ import com.jalen.screenrecord.fragment.VideoListFragment;
  */
 public class Main extends BaseActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-
-
-
+    public static final String EXTRA_FRAGMENT_ID = "fragment_id";
+    public static final String EXTRA_EVENT_ID = "event_id";
+    public static final int EVENT_ID_STOP_RECORD = 0x1002;
+    public static final int EVENT_ID_EDIT = 0x1003;
+    public static final int EVENT_ID_NULL = -1;
     private NavigationDrawerFragment mNavigationDrawerFragment;
-
     private CharSequence mTitle;
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,26 +40,33 @@ public class Main extends BaseActivity
         }*/
 
         setContentView(R.layout.activity_main_under);
-
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 getActionBarToolbar(),
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        Intent data = getIntent();
+        if (data != null){
+            int fragmentId = data.getIntExtra(Main.EXTRA_FRAGMENT_ID, -1);
+            int eventId = data.getIntExtra(Main.EXTRA_EVENT_ID, -1);
+            if (fragmentId != -1){
+                onNavigationDrawerItemSelected(fragmentId, eventId);
+            }
+        }
+
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(int position) {
+    public void onNavigationDrawerItemSelected(int position, int eventId) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         switch (position) {
             case 0:
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, VideoListFragment.newInstance(0, "params2"))
+                        .replace(R.id.container, VideoListFragment.newInstance(0, eventId))
                         .commit();
                 break;
             case 1:
@@ -85,7 +89,6 @@ public class Main extends BaseActivity
                         .commit();
                 break;
         }
-
     }
 
     public void onSectionAttached(int number) {
@@ -99,7 +102,6 @@ public class Main extends BaseActivity
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,7 +121,6 @@ public class Main extends BaseActivity
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

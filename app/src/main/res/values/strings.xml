@@ -51,4 +51,7 @@
     <string name="stop_on_shake_sum">设置当屏幕录制时摇一摇即可停止录制</string>
     <string name="show_touch_title">显示触摸操作</string>
     <string name="show_touch_sum">为触摸操作提供视觉提示</string>
+    <string name="notification_recording">录制……</string>
+    <string name="notification_stop">停止</string>
+    <string name="notification_edit">绘制</string>
 </resources>

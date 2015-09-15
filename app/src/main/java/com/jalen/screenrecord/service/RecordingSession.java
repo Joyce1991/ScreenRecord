@@ -132,9 +132,11 @@ final class RecordingSession {
 
         // 2. 停止mediarecorder，数据flush到文件中去
         mMediaRecorder.stop();
+        mMediaRecorder.reset();
 
         // 3. 资源释放
         mMediaRecorder.release();
+        mMediaRecorder = null;
         mVirtualDisplay.release();
 
     }

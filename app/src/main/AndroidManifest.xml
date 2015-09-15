@@ -35,6 +35,9 @@
             android:name=".service.ScreeenRecordService"
             android:enabled="true"
             android:exported="true" >
+            <intent-filter>
+                <action android:name="com.jalen.screenrecord.service"/>
+            </intent-filter>
         </service>
 
         <activity

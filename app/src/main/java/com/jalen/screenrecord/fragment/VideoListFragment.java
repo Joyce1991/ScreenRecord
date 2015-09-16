@@ -95,24 +95,19 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_item, container, false);
-
-        // Set the adapter
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
-        mAdapter = new VideoAdapter(getActivity(), null);
-        mListView.setAdapter(mAdapter);
-
-        // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
-
-
-        return view;
+        return inflater.inflate(R.layout.fragment_item, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        // ListView设置
+        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        mAdapter = new VideoAdapter(getActivity(), null);
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(this);
+        // RecordButton设置
         btnRecord = (FloatingActionButton) view.findViewById(R.id.btn_record);
-        boolean isRecording = ((BaseActivity) getActivity()).getBooleanPreferenceByKey(Contants.PREFERENCE_KEY_ISRECORDING);
+        boolean isRecording = (mController != null && mController.isRecordingProxy());
         btnRecord.setImageResource(isRecording ? R.drawable.ic_stop_white_24dp : R.drawable.ic_action_record);
         btnRecord.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -269,6 +264,7 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     }
 
     private class ScreenRecordConnection implements ServiceConnection {
+        private static final String tag = "ScreenRecordConnection";
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(tag, "服务链接成功");

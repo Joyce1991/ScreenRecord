@@ -62,6 +62,8 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     private UIReceiver mUIReceiver;
 
     private  int mEventId = -1;
+
+    private ScreenRecordConnection mConn;
     /**
      * 录制悬浮按钮
      */
@@ -102,9 +104,12 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // ListView设置
         mListView = (AbsListView) view.findViewById(android.R.id.list);
+        View emptyView = view.findViewById(R.id.empty);
+        mListView.setEmptyView(emptyView);
         mAdapter = new VideoAdapter(getActivity(), null);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
+
         // RecordButton设置
         btnRecord = (FloatingActionButton) view.findViewById(R.id.btn_record);
         boolean isRecording = (mController != null && mController.isRecordingProxy());
@@ -134,12 +139,19 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
         ((Main) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
         mEventId = getArguments().getInt(ARG_EVENTID);
+
+        // 注册广播接收者，监听来自service的UI更新请求
+        mUIReceiver = new UIReceiver();
+        IntentFilter filter = new IntentFilter(ACTION_RECEIVER);
+        getActivity().registerReceiver(mUIReceiver, filter);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        getActivity().unregisterReceiver(mUIReceiver);
+        if (mUIReceiver != null){
+            getActivity().unregisterReceiver(mUIReceiver);
+        }
     }
 
     @Override
@@ -156,22 +168,28 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        // 绑定服务
+        if (mConn == null){
+            mConn = new ScreenRecordConnection();
+            getActivity().bindService(new Intent(getActivity(), ScreeenRecordService.class), mConn, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        getActivity().bindService(new Intent(getActivity(), ScreeenRecordService.class), new ScreenRecordConnection(), Context.BIND_AUTO_CREATE);
-        mUIReceiver = new UIReceiver();
-        IntentFilter filter = new IntentFilter(ACTION_RECEIVER);
-        getActivity().registerReceiver(mUIReceiver, filter);
         if (mController != null && mEventId == EVENTID_STOP_RECORD){
             mController.stopScreenRecordProxy();
         }
     }
 
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mConn != null){
+            getActivity().unbindService(mConn);
         }
     }
 

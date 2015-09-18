@@ -54,4 +54,6 @@
     <string name="notification_recording">录制……</string>
     <string name="notification_stop">停止</string>
     <string name="notification_edit">绘制</string>
+    <string name="video_empty_description">\t\t在本app的视频存放目录中没有扫描到任何视频，你可以点击录制按钮开始录制。如果你不知道怎么使用本app，可以点击观看视频按钮收看教程</string>
+    <string name="btn_course_watch">视频教程观看</string>
 </resources>

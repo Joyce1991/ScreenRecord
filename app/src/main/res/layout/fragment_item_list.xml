@@ -18,11 +18,11 @@
         android:divider="@android:color/white"
         android:scrollbars="none"/>
 
-    <TextView
-        android:id="@android:id/empty"
+    <include
+        android:id="@+id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" />
+        layout="@layout/layout_video_empty" />
 
     <!--悬浮按钮：录制-->
     <com.melnykov.fab.FloatingActionButton

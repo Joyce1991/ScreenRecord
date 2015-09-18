@@ -15,4 +15,5 @@
     <color name="video_name_color">@android:color/white</color>
     <color name="textColorPrimaryLight">#333333</color>
     <color name="colorDivider">#eeeeee</color>
+    <color name="colorHint">#969696</color>
 </resources>

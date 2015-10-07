@@ -10,7 +10,7 @@ import com.jalen.screenrecord.R;
 /**
  * Created by xxx on 2015/8/31.
  */
-public class VideoPlayer extends BaseActivity {
+public class VideoPlayer extends Base {
     public static final String EXTRA_VIDEO_PATH = "com.jalen.screenrecord.videopath";
     private static final String STATE_PLAY_POSITION = "position";
 

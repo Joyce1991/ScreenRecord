@@ -1,46 +1,66 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.jalen.screenrecord.fragment.GifMakerFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_margin="8dp"
-        android:padding="8dp"
-        android:background="#fafafa">
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <!--区段控制-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/tv_start_time"
-                android:layout_width="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="#fafafa"
+            android:orientation="vertical">
+            <!--区段控制-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start"
-                android:layout_weight="1"
-                android:text="00:00"/>
-            <TextView
-                android:id="@+id/tv_end_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:layout_weight="1"
-                android:text="09:35"/>
+                android:orientation="horizontal"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp">
+
+                <TextView
+                    android:id="@+id/tv_start_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:text="00:00" />
+
+                <TextView
+                    android:id="@+id/tv_end_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="09:35" />
+            </LinearLayout>
+
+            <com.jalen.screenrecord.widget.RangeSeekBar
+                android:id="@+id/sb_start_end"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:paddingEnd="0dp"
+                app:paddingStart="0dp"
+                app:showLabels="false" />
+
         </LinearLayout>
-        <com.jalen.screenrecord.widget.RangeSeekBar
-            android:id="@+id/sb_start_end"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:showLabels="false"
-            app:paddingStart="0dp"
-            app:paddingEnd="0dp"/>
+
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent" />
     </LinearLayout>
 
     <!--悬浮按钮：录制-->
@@ -50,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_action_add_white"
+        android:src="@drawable/ic_add_white_24dp"
         app:fab_colorNormal="@color/recordPrimary"
         app:fab_colorPressed="@color/recordPrimaryDark"
         app:fab_colorRipple="@color/recordPrimaryRipple" />

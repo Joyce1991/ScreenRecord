@@ -3,7 +3,6 @@ package com.jalen.screenrecord.activity;
 import android.content.ComponentName;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.support.v4.content.IntentCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,7 +16,7 @@ import com.jalen.screenrecord.fragment.SettingsFragment.OnFragmentInteractionLis
  * 全局设置
  * <div>参考资料：<a href="https://github.com/google/iosched/blob/master/android/src/main/java/com/google/samples/apps/iosched/ui/SettingsActivity.java">google i/o大会android客户端</a></div>
  */
-public class Settings extends BaseActivity implements OnFragmentInteractionListener {
+public class Settings extends Base implements OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

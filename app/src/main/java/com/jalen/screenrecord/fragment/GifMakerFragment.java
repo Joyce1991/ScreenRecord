@@ -7,8 +7,10 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.media.ThumbnailUtils;
 import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -18,11 +20,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.jalen.screenrecord.R;
 import com.jalen.screenrecord.activity.Main;
 import com.jalen.screenrecord.encoder.AnimatedGifEncoder;
 import com.jalen.screenrecord.service.ScreeenRecordService;
+import com.jalen.screenrecord.widget.RangeSeekBar;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.io.ByteArrayOutputStream;
@@ -36,19 +41,20 @@ import java.util.List;
  * Gif图片生产
  */
 public class GifMakerFragment extends BaseFragment {
-//    private OnGifListener mGifListener = null;
     private static final String ARG_PARAM2 = "param2";
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final int REQUEST_VIDEO_SELECT = 0x001;
 
-    private String mParam1;
-    private String mParam2;
-
-    private Button btnConvert;
+    private FloatingActionButton fabAdd;
     private Spinner fps;
+    private RangeSeekBar seekBar;
+    private VideoView videoView;
+    private TextView tvMinTime;
+    private TextView tvMaxTime;
+
     private MediaMetadataRetriever mmRetriever;
     private File outFile;
     private long maxDur;
-//    private OnGifListener mGifListener = null;
 
 
     public static GifMakerFragment newInstance(int sectionNumber, String param2) {
@@ -68,18 +74,60 @@ public class GifMakerFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mmRetriever = new MediaMetadataRetriever();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_gif_maker, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        fabAdd = (FloatingActionButton) view.findViewById(R.id.btn_add);
+        videoView = (VideoView) view.findViewById(R.id.videoView);
+        seekBar = (RangeSeekBar) view.findViewById(R.id.sb_start_end);
+        tvMaxTime = (TextView) view.findViewById(R.id.tv_end_time);
+        tvMinTime = (TextView) view.findViewById(R.id.tv_start_time);
+
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 打开视频文件选择
+                Intent intent4VideoSelect = new Intent();
+                intent4VideoSelect.setType("video/*");
+                intent4VideoSelect.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent4VideoSelect, REQUEST_VIDEO_SELECT);
+            }
+        });
+        seekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener() {
+            @Override
+            public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Object minValue, Object maxValue) {
+                Log.d(tag, minValue + " : " + maxValue);
+            }
+        });
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                // 设置seekbar的区间值和初始值
+                seekBar.setRangeValues(0, mp.getDuration());
+                tvMinTime.setText(getTimeForTrackFormat(0, true));
+                tvMaxTime.setText(getTimeForTrackFormat(mp.getDuration(), true));
+                // 设置seekbar变化监听
+                seekBar.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+                    @Override
+                    public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Integer minValue, Integer maxValue) {
+                        // 更新seekbar的值
+                        tvMinTime.setText(getTimeForTrackFormat(minValue, true));
+                        tvMaxTime.setText(getTimeForTrackFormat(maxValue, true));
+                        // 更新视频播放位置
+                        videoView.seekTo(minValue);
+                    }
+                });
+            }
+        });
 
     }
 
@@ -95,6 +143,36 @@ public class GifMakerFragment extends BaseFragment {
         super.onDetach();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_VIDEO_SELECT:
+                if (resultCode == Activity.RESULT_OK) {
+                    //   判断data是否为空，data中的是否有数据
+                    if (data != null && data.getData() != null) {
+                        Uri uri = data.getData();
+
+                        videoView.setVideoURI(uri);
+                        videoView.start();
+                    }
+                    break;
+                }
+        }
+    }
+
+    public static String getTimeForTrackFormat(int timeInMills, boolean display2DigitsInMinsSection) {
+        int minutes = (timeInMills / (60 * 1000));
+        int seconds = (timeInMills - minutes * 60 * 1000) / 1000;
+        String result = display2DigitsInMinsSection && minutes < 10 ? "0" : "";
+        result += minutes + ":";
+        if (seconds < 10) {
+            result += "0" + seconds;
+        } else {
+            result += seconds;
+        }
+        return result;
+    }
 
     class ConvertTask extends AsyncTask<Void, Integer, String> {
 
@@ -161,5 +239,6 @@ public class GifMakerFragment extends BaseFragment {
 
         }
     }
+
 }
 

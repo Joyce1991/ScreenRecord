@@ -16,7 +16,7 @@ import com.jalen.screenrecord.R;
  * <div>Activity基础类 <div/>
  * <div>Created by jalen on 2015/8/22.</div>
  */
-public class BaseActivity extends AppCompatActivity {
+public class Base extends AppCompatActivity {
     /**
      * 用于log打印，记录当前类名
      */
@@ -31,7 +31,7 @@ public class BaseActivity extends AppCompatActivity {
      */
     private SharedPreferences sp;
 
-    public BaseActivity(){
+    public Base(){
         super();
         tag = this.getClass().getSimpleName();
 

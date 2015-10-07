@@ -20,12 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.TextView;
 
 import com.jalen.screenrecord.AfferentException;
-import com.jalen.screenrecord.Contants;
 import com.jalen.screenrecord.R;
-import com.jalen.screenrecord.activity.BaseActivity;
 import com.jalen.screenrecord.activity.Main;
 import com.jalen.screenrecord.activity.VideoPlayer;
 import com.jalen.screenrecord.adapter.VideoAdapter;

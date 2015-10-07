@@ -19,7 +19,7 @@ import com.jalen.screenrecord.fragment.VideoListFragment;
  * 主activity
  * <div>参考文献：<a href="http://enginebai.logdown.com/posts/280450/android-toolbar-navigation-drawer">Toolbar + 套用Navigation Drawer</a></div>
  */
-public class Main extends BaseActivity
+public class Main extends Base
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     public static final String EXTRA_FRAGMENT_ID = "fragment_id";
     public static final String EXTRA_EVENT_ID = "event_id";

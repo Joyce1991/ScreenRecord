@@ -48,6 +48,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jalen.screenrecord.activity.Main" />
         </activity>
+
+        <activity
+            android:name=".activity.GifMaker"
+            android:label="@string/title_activity_gifmaker"
+            android:parentActivityName=".activity.Main" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jalen.screenrecord.activity.Main" />
+        </activity>
     </application>
 
 </manifest>

@@ -130,6 +130,7 @@ public class GifMakerFragment extends BaseFragment {
         });
 
     }
+/*
 
     @Override
     public void onAttach(Activity activity) {
@@ -137,6 +138,7 @@ public class GifMakerFragment extends BaseFragment {
         ((Main) activity).onSectionAttached(
                 getArguments().getInt(ARG_SECTION_NUMBER));
     }
+*/
 
     @Override
     public void onDetach() {
@@ -148,11 +150,12 @@ public class GifMakerFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_VIDEO_SELECT:
+
                 if (resultCode == Activity.RESULT_OK) {
                     //   判断data是否为空，data中的是否有数据
                     if (data != null && data.getData() != null) {
                         Uri uri = data.getData();
-
+                        videoView.setVisibility(View.VISIBLE);
                         videoView.setVideoURI(uri);
                         videoView.start();
                     }

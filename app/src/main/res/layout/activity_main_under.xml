@@ -4,24 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context=".Main">
-
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar_actionbar" />
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbar">
+        android:layout_height="match_parent">
 
         <!-- main content view. -->
-        <FrameLayout
-            android:id="@+id/container"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/toolbar_actionbar" />
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/toolbar" />
+        </RelativeLayout>
 
         <!--
             1.layout_gravity="start" 抽屉在左边，从左到右划出;

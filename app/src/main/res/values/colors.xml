@@ -3,7 +3,7 @@
     <color name="appColorPrimary">#F44336</color>
     <color name="appColorPrimaryDark">#E53935</color>
     <color name="appTextColorPrimary">#FFFFFF</color>
-    <color name="appNavigationBarColor">@color/black</color>
+    <color name="appNavigationBarColor">#F44336</color>
     <color name="appWindowBackground">#FFFFFF</color>
 
     <color name="black">#000000</color>

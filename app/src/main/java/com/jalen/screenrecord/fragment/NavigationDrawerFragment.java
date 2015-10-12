@@ -1,6 +1,9 @@
 package com.jalen.screenrecord.fragment;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.app.Activity;
@@ -63,7 +66,7 @@ public class NavigationDrawerFragment extends BaseFragment {
     private ListView mDrawerListView;
     private View mFragmentContainerView;
 
-    private int mCurrentSelectedPosition = 0;
+    private int mCurrentSelectedPosition = 1;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
@@ -114,6 +117,10 @@ public class NavigationDrawerFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         mDrawerListView = (ListView) inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
+        // 设置headerview
+        View headerView = inflater.inflate(R.layout.layout_navigation_header, mDrawerListView, false);
+        mDrawerListView.addHeaderView(headerView, null, false); // 第三个参数false让headerview不可被选择
+
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -270,8 +277,14 @@ public class NavigationDrawerFragment extends BaseFragment {
             return true;
         }
 
-        if (item.getItemId() == R.id.action_example) {
-            Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
+        if (item.getItemId() == R.id.action_market) {
+            Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+            Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+            try {
+                startActivity(goToMarket);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(getActivity(), "Couldn't launch the market !", Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 

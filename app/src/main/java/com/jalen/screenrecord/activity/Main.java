@@ -63,16 +63,20 @@ public class Main extends Base
     @Override
     public void onNavigationDrawerItemSelected(int position, int eventId) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        switch (position) {
+        switch (position-1) {
             case 0:
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, VideoListFragment.newInstance(0, eventId))
                         .commit();
                 break;
             case 1:
+            /*
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, GifMakerFragment.newInstance(1, "params2"))
                         .commit();
+            */
+                Intent intent2GifMaker = new Intent(this, GifMaker.class);
+                startActivity(intent2GifMaker);
                 break;
             case 2:
                 fragmentManager.beginTransaction()

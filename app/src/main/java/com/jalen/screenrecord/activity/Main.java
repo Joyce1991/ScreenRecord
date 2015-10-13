@@ -1,12 +1,14 @@
 package com.jalen.screenrecord.activity;
 
 import android.content.Intent;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
+import android.view.WindowManager;
 
 import com.jalen.screenrecord.fragment.CutFragment;
 import com.jalen.screenrecord.fragment.FeedbackFragment;
@@ -29,6 +31,7 @@ public class Main extends Base
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +43,13 @@ public class Main extends Base
         }*/
 
         setContentView(R.layout.activity_main_under);
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        boolean isFitsSystemWindows = ViewCompat.getFitsSystemWindows(mDrawerLayout);
+        if (isFitsSystemWindows) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();

@@ -5,6 +5,7 @@
     <color name="appTextColorPrimary">#FFFFFF</color>
     <color name="appNavigationBarColor">#F44336</color>
     <color name="appWindowBackground">#FFFFFF</color>
+    <color name="appColorBackground">#F44336</color>
 
     <color name="black">#000000</color>
     <color name="recordPrimary">#F44336</color>

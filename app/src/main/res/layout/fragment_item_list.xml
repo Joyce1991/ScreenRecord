@@ -6,7 +6,20 @@
     android:layout_height="match_parent"
     tools:context="com.jalen.screenrecord.fragment.VideoListFragment">
 
-    <ListView
+    <com.tt.whorlviewlibrary.WhorlView
+        android:id="@+id/whorl_loading"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        app:whorlview_circle_colors="#F14336_#ffffff_#5677fc_#F44336_#4CAF50"
+        app:whorlview_circle_speed="270"
+        app:whorlview_parallax="fast"
+        app:whorlview_strokeWidth="6"
+        app:whorlview_sweepAngle="90">
+    </com.tt.whorlviewlibrary.WhorlView>
+
+    <android.support.v7.widget.RecyclerView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,13 +28,11 @@
         android:dividerHeight="24dp"
         android:headerDividersEnabled="true"
         android:footerDividersEnabled="true"
-        android:divider="@android:color/white"
+        android:divider="@null"
+        android:visibility="gone"
         android:scrollbars="none"/>
 
     <include
-        android:id="@+id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         layout="@layout/layout_video_empty" />
 
     <!--悬浮按钮：录制-->

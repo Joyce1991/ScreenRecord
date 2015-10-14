@@ -14,6 +14,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +33,7 @@ import com.jalen.screenrecord.bean.VideoBean;
 import com.jalen.screenrecord.service.ScreeenRecordService;
 import com.jalen.screenrecord.util.MediaFile;
 import com.melnykov.fab.FloatingActionButton;
+import com.tt.whorlviewlibrary.WhorlView;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -48,7 +52,9 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     public static final int EVENTID_START_RECORD = 0x1001;
     public static final int EVENTID_STOP_RECORD = 0x1002;
 
-    private AbsListView mListView;
+    private RecyclerView mListView;
+
+    private WhorlView mLoading;
 
     private VideoAdapter mAdapter;
 
@@ -99,13 +105,11 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        // ListView设置
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        initRecycerView(view);
+
         View emptyView = view.findViewById(R.id.empty);
-        mListView.setEmptyView(emptyView);
         mAdapter = new VideoAdapter(getActivity(), null);
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(this);
+        mLoading = (WhorlView) view.findViewById(R.id.whorl_loading);
 
         // RecordButton设置
         btnRecord = (FloatingActionButton) view.findViewById(R.id.btn_record);
@@ -126,8 +130,32 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
             }
         });
         // 启动扫描线程
-        showDialog(getText(R.string.dialog_scan_video));
+//        showDialog(getText(R.string.dialog_scan_video));
+        mLoading.start();
+        mLoading.setVisibility(View.VISIBLE);
         new Thread(new ScanRunnable()).start();
+    }
+
+    /**
+     * RecyclerView初始化
+     * @param view
+     */
+    private void initRecycerView(View view) {
+        mListView = (RecyclerView) view.findViewById(android.R.id.list);
+        mListView.setHasFixedSize(true);
+        mListView.setItemAnimator(new DefaultItemAnimator());
+        mListView.setLayoutManager(getLayoutManager());
+
+    }
+
+    /**
+     * 获取RecyclerView的LayoutManager
+     * @return
+     */
+    private LinearLayoutManager getLayoutManager () {
+        LinearLayoutManager layoutManager = new LinearLayoutManager (getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        return layoutManager;
     }
 
     @Override
@@ -218,13 +246,15 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
 
         // 遍历解析视频文件
         List<VideoBean> videoBeans = new ArrayList<>();
-        for (File file : videoFiles) {
-            VideoBean videoBean = new VideoBean();
-            videoBean.setLength(file.length());
-            videoBean.setLastModified(file.lastModified());
-            videoBean.setVideoPath(file.getAbsolutePath());
-            videoBean.setVideoName(file.getName());
-            videoBeans.add(videoBean);
+        if (videoFiles != null){
+            for (File file : videoFiles) {
+                VideoBean videoBean = new VideoBean();
+                videoBean.setLength(file.length());
+                videoBean.setLastModified(file.lastModified());
+                videoBean.setVideoPath(file.getAbsolutePath());
+                videoBean.setVideoName(file.getName());
+                videoBeans.add(videoBean);
+            }
         }
         return videoBeans;
     }
@@ -241,6 +271,7 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
         @Override
         public void run() {
             try {
+                Thread.sleep(2000);
                 List<VideoBean> mData = scanVideoFile(mVideoFileDir);
                 mAdapter.setmData(mData);
                 // 通知UI线程进行UI刷新
@@ -270,7 +301,10 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
             if (fragment != null) {
                 switch (msg.what) {
                     case SCAN_STATE_COMPLETED:
-                        fragment.dismissDialog();
+//                        fragment.dismissDialog();
+                        fragment.mLoading.stop();
+                        fragment.mLoading.setVisibility(View.GONE);
+                        fragment.mListView.setVisibility(View.VISIBLE);
                         fragment.mAdapter.notifyDataSetChanged();
                         break;
                 }

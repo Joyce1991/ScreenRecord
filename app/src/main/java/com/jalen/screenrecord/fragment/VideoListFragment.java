@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.media.MediaScannerConnection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,24 +20,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 
-import com.jalen.screenrecord.AfferentException;
 import com.jalen.screenrecord.R;
 import com.jalen.screenrecord.activity.Main;
 import com.jalen.screenrecord.activity.VideoPlayer;
 import com.jalen.screenrecord.adapter.VideoAdapter;
 import com.jalen.screenrecord.bean.VideoBean;
 import com.jalen.screenrecord.service.ScreeenRecordService;
-import com.jalen.screenrecord.util.MediaFile;
+import com.jalen.screenrecord.util.FileUtil;
 import com.melnykov.fab.FloatingActionButton;
 import com.tt.whorlviewlibrary.WhorlView;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,13 +47,11 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     public static final int EVENTID_START_RECORD = 0x1001;
     public static final int EVENTID_STOP_RECORD = 0x1002;
 
-    private RecyclerView mListView;
+    private RecyclerView mRecyclerView;
 
     private WhorlView mLoading;
 
     private VideoAdapter mAdapter;
-
-    private MediaScannerConnection.MediaScannerConnectionClient mClient;
 
     private String mVideoFileDir;
 
@@ -71,6 +64,7 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
      * 录制悬浮按钮
      */
     private FloatingActionButton btnRecord;
+
     private ScreeenRecordService.ScreenRecordController mController;
 
     /**
@@ -108,7 +102,6 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
         initRecycerView(view);
 
         View emptyView = view.findViewById(R.id.empty);
-        mAdapter = new VideoAdapter(getActivity(), null);
         mLoading = (WhorlView) view.findViewById(R.id.whorl_loading);
 
         // RecordButton设置
@@ -129,10 +122,18 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
                 }
             }
         });
+
+        loadData();
+    }
+
+    /**
+     * 初次打开该fragment时对数据进行加载
+     */
+    private void loadData() {
         // 启动扫描线程
-//        showDialog(getText(R.string.dialog_scan_video));
         mLoading.start();
         mLoading.setVisibility(View.VISIBLE);
+        mAdapter = new VideoAdapter(getActivity(), null);
         new Thread(new ScanRunnable()).start();
     }
 
@@ -141,10 +142,10 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
      * @param view
      */
     private void initRecycerView(View view) {
-        mListView = (RecyclerView) view.findViewById(android.R.id.list);
-        mListView.setHasFixedSize(true);
-        mListView.setItemAnimator(new DefaultItemAnimator());
-        mListView.setLayoutManager(getLayoutManager());
+        mRecyclerView = (RecyclerView) view.findViewById(android.R.id.list);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setLayoutManager(getLayoutManager());
 
     }
 
@@ -218,46 +219,7 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
         }
     }
 
-    /**
-     * 扫描指定目录下是视频文件
-     *
-     * @param dirPath 目录路径
-     * @return 返回文件列表
-     */
-    private List<VideoBean> scanVideoFile(String dirPath) throws Throwable {
-        File dir = new File(dirPath);
-        if (!dir.exists()) {
-            return null;
-        }
 
-        if (!dir.isDirectory()) {
-            throw new AfferentException("你指定的文件路径不是一个目录");
-        }
-
-        // 创建一个文件过滤器
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return MediaFile.isVideoFile(pathname.getAbsolutePath());
-            }
-        };
-        // 列出所有的视频文件
-        File[] videoFiles = dir.listFiles(filter);
-
-        // 遍历解析视频文件
-        List<VideoBean> videoBeans = new ArrayList<>();
-        if (videoFiles != null){
-            for (File file : videoFiles) {
-                VideoBean videoBean = new VideoBean();
-                videoBean.setLength(file.length());
-                videoBean.setLastModified(file.lastModified());
-                videoBean.setVideoPath(file.getAbsolutePath());
-                videoBean.setVideoName(file.getName());
-                videoBeans.add(videoBean);
-            }
-        }
-        return videoBeans;
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -267,13 +229,20 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
         startActivity(intent2player);
     }
 
+    /**
+     * 视频文件扫描子线程
+     */
     private class ScanRunnable implements Runnable {
         @Override
         public void run() {
             try {
                 Thread.sleep(2000);
-                List<VideoBean> mData = scanVideoFile(mVideoFileDir);
-                mAdapter.setmData(mData);
+                List<VideoBean> mData = FileUtil.scanVideoFile(mVideoFileDir);
+                if (mAdapter != null) {
+                    mAdapter.setmData(mData);
+                } else {
+                    mAdapter = new VideoAdapter(getActivity(), mData);
+                }
                 // 通知UI线程进行UI刷新
                 uiHandler.obtainMessage(SCAN_STATE_COMPLETED).sendToTarget();
             } catch (Throwable throwable) {
@@ -287,24 +256,24 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
      */
     private UIHandler uiHandler = new UIHandler(this);
     private static final int SCAN_STATE_COMPLETED = 0x1001;
-
     private static class UIHandler extends Handler {
         private final WeakReference<VideoListFragment> mFragment;
-
         UIHandler(VideoListFragment fragment) {
             mFragment = new WeakReference<VideoListFragment>(fragment);
         }
-
         @Override
         public void handleMessage(Message msg) {
             VideoListFragment fragment = mFragment.get();
             if (fragment != null) {
                 switch (msg.what) {
                     case SCAN_STATE_COMPLETED:
-//                        fragment.dismissDialog();
                         fragment.mLoading.stop();
                         fragment.mLoading.setVisibility(View.GONE);
-                        fragment.mListView.setVisibility(View.VISIBLE);
+
+                        fragment.mRecyclerView.setVisibility(View.VISIBLE);
+                        fragment.btnRecord.setVisibility(View.VISIBLE);
+
+                        fragment.mRecyclerView.setAdapter(fragment.mAdapter);
                         fragment.mAdapter.notifyDataSetChanged();
                         break;
                 }

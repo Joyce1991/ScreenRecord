@@ -42,6 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
+        android:visibility="gone"
         android:src="@drawable/ic_action_record"
         app:fab_colorNormal="@color/recordPrimary"
         app:fab_colorPressed="@color/recordPrimaryDark"

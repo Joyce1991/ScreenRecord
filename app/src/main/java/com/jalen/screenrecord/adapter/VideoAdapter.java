@@ -2,6 +2,7 @@ package com.jalen.screenrecord.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,7 @@ import java.util.List;
  * 视频列表数据适配器
  * Created by xxx on 2015/8/28.
  */
-public class VideoAdapter extends BaseAdapter {
-
+public class VideoAdapter extends RecyclerView.Adapter {
     private Context mContext;
     private List<VideoBean> mData;
 
@@ -32,6 +32,21 @@ public class VideoAdapter extends BaseAdapter {
     }
 
     @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return this.mData == null ? 0 : this.mData.size();
+    }
+
+   /* @Override
     public int getCount() {
         if (mData == null){
             return 0;
@@ -113,5 +128,5 @@ public class VideoAdapter extends BaseAdapter {
             view.setTag(this);
         }
 
-    }
+    }*/
 }

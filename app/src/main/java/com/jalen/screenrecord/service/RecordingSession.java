@@ -1,7 +1,9 @@
 package com.jalen.screenrecord.service;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -11,6 +13,8 @@ import android.media.MediaScannerConnection;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -25,6 +29,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import static android.os.Environment.DIRECTORY_MOVIES;
 
 /**
  * Created by xxx on 2015/8/26.
@@ -50,7 +56,7 @@ final class RecordingSession {
      * 文件名称格式
      */
     private final DateFormat fileFormat =
-            new SimpleDateFormat("''yyyy年MM月dd日：HH时mm分ss'.mp4'", Locale.CHINA);
+            new SimpleDateFormat("''yyyy-MM-dd-HH-mm-ss'.mp4'", Locale.CHINA);
     /**
      * 虚拟显示屏
      */
@@ -61,8 +67,16 @@ final class RecordingSession {
         this.mResultCode = resultCode;
         this.mData = data;
 
-        File picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        File picturesDir = Environment.getExternalStoragePublicDirectory(DIRECTORY_MOVIES);
         mOutputRoot = new File(picturesDir, "ScreenRecord");
+
+
+        // 1. 创建视频文件存放目录
+        if (!mOutputRoot.exists()){
+            if (!mOutputRoot.mkdirs()){
+                Log.e(tag,"目录创建失败");
+            }
+        }
         String outputName = fileFormat.format(new Date());
         mOutputFile = new File(mOutputRoot, outputName).getAbsolutePath();
 
@@ -76,12 +90,7 @@ final class RecordingSession {
     public void startRecording() {
         Log.d(tag, "屏幕录制开始……");
 
-        // 1. 创建视频文件存放目录
-        if (!mOutputRoot.exists()){
-            if (!mOutputRoot.mkdirs()){
-                Log.e(tag,"目录创建失败");
-            }
-        }
+
 
         // 2. 获取录屏参数
         RecordingBean recordingBean = getRecordingInfo();
@@ -100,7 +109,7 @@ final class RecordingSession {
         try {
             mMediaRecorder.prepare();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Unable to prepare MediaRecorder.", e);
         }
 
         // 5.用获取的的MediaProjection来创建虚拟Display

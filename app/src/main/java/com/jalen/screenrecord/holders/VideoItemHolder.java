@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jalen.screenrecord.R;
+import com.jalen.screenrecord.bean.VideoBean;
 
 /**
  * Created by joyce on 2015/10/16.
@@ -26,13 +27,20 @@ public class VideoItemHolder extends RecyclerView.ViewHolder {
         btnDelete = (Button) itemView.findViewById(R.id.btn_delete);
     }
 
-    /**
-     * Item点击事件监听器
-     */
-    public interface OnVideoItemClickListener {
-        /**
-         * 缩略图被点击
-         */
-        void onImageClick();
+    public TextView getTvVideoName() {
+        return tvVideoName;
     }
+
+    public ImageView getIvVideoThumb() {
+        return ivVideoThumb;
+    }
+
+    public Button getBtnShare() {
+        return btnShare;
+    }
+
+    public Button getBtnDelete() {
+        return btnDelete;
+    }
+
 }

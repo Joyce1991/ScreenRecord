@@ -39,7 +39,7 @@ import java.util.List;
 /**
  * 视频列表显示界面
  */
-public class VideoListFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class VideoListFragment extends BaseFragment implements VideoAdapter.OnVideoItemClickListener {
     private static final int REQUEST_CREATE_SCREEN_CAPTURE = 0x0001;
     private static final String ARG_SECTION_NUMBER = "section_number";
     public static final String ACTION_RECEIVER = "android.intent.action.ui.record";
@@ -51,13 +51,15 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
 
     private WhorlView mLoading;
 
+    private View emptyView;
+
     private VideoAdapter mAdapter;
 
     private String mVideoFileDir;
 
     private UIReceiver mUIReceiver;
 
-    private  int mEventId = -1;
+    private int mEventId = -1;
 
     private ScreenRecordConnection mConn;
     /**
@@ -101,7 +103,7 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     public void onViewCreated(View view, Bundle savedInstanceState) {
         initRecycerView(view);
 
-        View emptyView = view.findViewById(R.id.empty);
+        emptyView = view.findViewById(R.id.empty);
         mLoading = (WhorlView) view.findViewById(R.id.whorl_loading);
 
         // RecordButton设置
@@ -133,12 +135,12 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
         // 启动扫描线程
         mLoading.start();
         mLoading.setVisibility(View.VISIBLE);
-        mAdapter = new VideoAdapter(getActivity(), null);
         new Thread(new ScanRunnable()).start();
     }
 
     /**
      * RecyclerView初始化
+     *
      * @param view
      */
     private void initRecycerView(View view) {
@@ -151,10 +153,11 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
 
     /**
      * 获取RecyclerView的LayoutManager
+     *
      * @return
      */
-    private LinearLayoutManager getLayoutManager () {
-        LinearLayoutManager layoutManager = new LinearLayoutManager (getActivity());
+    private LinearLayoutManager getLayoutManager() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         return layoutManager;
     }
@@ -175,7 +178,7 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     @Override
     public void onDetach() {
         super.onDetach();
-        if (mUIReceiver != null){
+        if (mUIReceiver != null) {
             getActivity().unregisterReceiver(mUIReceiver);
         }
     }
@@ -197,7 +200,7 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     public void onStart() {
         super.onStart();
         // 绑定服务
-        if (mConn == null){
+        if (mConn == null) {
             mConn = new ScreenRecordConnection();
             getActivity().bindService(new Intent(getActivity(), ScreeenRecordService.class), mConn, Context.BIND_AUTO_CREATE);
         }
@@ -206,7 +209,7 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     @Override
     public void onResume() {
         super.onResume();
-        if (mController != null && mEventId == EVENTID_STOP_RECORD){
+        if (mController != null && mEventId == EVENTID_STOP_RECORD) {
             mController.stopScreenRecordProxy();
         }
     }
@@ -214,19 +217,26 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mConn != null){
+        if (mConn != null) {
             getActivity().unbindService(mConn);
         }
     }
 
-
+    @Override
+    public void onImageClick(View view, VideoBean videoBean) {
+        Intent intent2player = new Intent(getContext(), VideoPlayer.class);
+        intent2player.putExtra(VideoPlayer.EXTRA_VIDEO_PATH, videoBean.getVideoPath());
+        startActivity(intent2player);
+    }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        VideoBean videoBean = (VideoBean) mAdapter.getItem(position);
-        Intent intent2player = new Intent(getActivity(), VideoPlayer.class);
-        intent2player.putExtra(VideoPlayer.EXTRA_VIDEO_PATH, mAdapter.getData().get(position).getVideoPath());
-        startActivity(intent2player);
+    public void onDeleteClick(View view, VideoBean videoBean) {
+
+    }
+
+    @Override
+    public void onShareClick(View view, VideoBean videoBean) {
+
     }
 
     /**
@@ -241,7 +251,7 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
                 if (mAdapter != null) {
                     mAdapter.setmData(mData);
                 } else {
-                    mAdapter = new VideoAdapter(getActivity(), mData);
+                    mAdapter = new VideoAdapter( mData);
                 }
                 // 通知UI线程进行UI刷新
                 uiHandler.obtainMessage(SCAN_STATE_COMPLETED).sendToTarget();
@@ -256,11 +266,14 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
      */
     private UIHandler uiHandler = new UIHandler(this);
     private static final int SCAN_STATE_COMPLETED = 0x1001;
+
     private static class UIHandler extends Handler {
         private final WeakReference<VideoListFragment> mFragment;
+
         UIHandler(VideoListFragment fragment) {
             mFragment = new WeakReference<VideoListFragment>(fragment);
         }
+
         @Override
         public void handleMessage(Message msg) {
             VideoListFragment fragment = mFragment.get();
@@ -270,19 +283,32 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
                         fragment.mLoading.stop();
                         fragment.mLoading.setVisibility(View.GONE);
 
-                        fragment.mRecyclerView.setVisibility(View.VISIBLE);
-                        fragment.btnRecord.setVisibility(View.VISIBLE);
+                        if (fragment.mAdapter.getData() == null || fragment.mAdapter.getData().size() == 0){
+                            fragment.showEmptyView();
+                        }else {
+                            fragment.mRecyclerView.setVisibility(View.VISIBLE);
+                            fragment.btnRecord.setVisibility(View.VISIBLE);
+                            fragment.emptyView.setVisibility(View.GONE);
 
-                        fragment.mRecyclerView.setAdapter(fragment.mAdapter);
-                        fragment.mAdapter.notifyDataSetChanged();
+                            fragment.mRecyclerView.setAdapter(fragment.mAdapter);
+                            fragment.mAdapter.notifyDataSetChanged();
+                        }
+
                         break;
                 }
             }
         }
     }
 
+    private void showEmptyView() {
+        emptyView.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.GONE);
+        btnRecord.setVisibility(View.VISIBLE);
+    }
+
     private class ScreenRecordConnection implements ServiceConnection {
         private static final String tag = "ScreenRecordConnection";
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(tag, "服务链接成功");
@@ -298,11 +324,11 @@ public class VideoListFragment extends BaseFragment implements AdapterView.OnIte
     /**
      * 接收service发过来的信息
      */
-    private class UIReceiver extends BroadcastReceiver{
+    private class UIReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent data) {
             int eventId = data.getIntExtra(VideoListFragment.ARG_EVENTID, 0);
-            switch (eventId){
+            switch (eventId) {
                 case EVENTID_START_RECORD:
                     btnRecord.setImageResource(R.drawable.ic_stop_white_24dp);
                     break;

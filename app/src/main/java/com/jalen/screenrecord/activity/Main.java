@@ -1,6 +1,9 @@
 package com.jalen.screenrecord.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.FragmentManager;
@@ -12,7 +15,6 @@ import android.view.WindowManager;
 
 import com.jalen.screenrecord.fragment.CutFragment;
 import com.jalen.screenrecord.fragment.FeedbackFragment;
-import com.jalen.screenrecord.fragment.GifMakerFragment;
 import com.jalen.screenrecord.fragment.NavigationDrawerFragment;
 import com.jalen.screenrecord.R;
 import com.jalen.screenrecord.fragment.VideoListFragment;
@@ -25,6 +27,7 @@ public class Main extends Base
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     public static final String EXTRA_FRAGMENT_ID = "fragment_id";
     public static final String EXTRA_EVENT_ID = "event_id";
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 0x22;
     public static final int EVENT_ID_STOP_RECORD = 0x1002;
     public static final int EVENT_ID_EDIT = 0x1003;
     public static final int EVENT_ID_NULL = -1;
@@ -68,7 +71,14 @@ public class Main extends Base
             }
         }
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED) {
+            // 请求权限
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+
     }
+
+
 
     @Override
     public void onNavigationDrawerItemSelected(int position, int eventId) {
@@ -136,5 +146,17 @@ public class Main extends Base
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE){
+            if(grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            }else {
+
+            }
+        }
     }
 }

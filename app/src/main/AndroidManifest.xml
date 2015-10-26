@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,11 +11,15 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_app"
         android:label="@string/app_name"
+        android:name=".MyApplication"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".activity.Main"
@@ -36,7 +39,7 @@
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
-                <action android:name="com.jalen.screenrecord.service"/>
+                <action android:name="com.jalen.screenrecord.service" />
             </intent-filter>
         </service>
 
@@ -48,7 +51,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jalen.screenrecord.activity.Main" />
         </activity>
-
         <activity
             android:name=".activity.GifMaker"
             android:label="@string/title_activity_gifmaker"
@@ -56,6 +58,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jalen.screenrecord.activity.Main" />
+        </activity>
+        <activity android:name=".activity.TestActivity" >
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
         </activity>
     </application>
 

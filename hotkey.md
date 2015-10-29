@@ -16,7 +16,7 @@
 
 SmartType代码     Ctrl+Shift+Space
 
-getter和setter方法快速   Ctrl+Insert
+getter和setter方法快速   Alert+Insert
 
 Override/implement      Ctrl+o
 
